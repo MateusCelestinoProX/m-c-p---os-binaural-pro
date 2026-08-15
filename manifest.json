@@ -1,0 +1,18 @@
+{
+  "name": "Binaural Labs Pro",
+  "short_name": "BinauralPro",
+  "description": "MP3 Player Privado Ultra Minimalista com Web Audio DSP e Frequências Binaurais",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070709",
+  "theme_color": "#070709",
+  "icons": [
+    {
+      "src": "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/onboarding.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

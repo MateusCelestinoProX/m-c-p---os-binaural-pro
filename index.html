@@ -2,11 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Binaural Labs - MP3 Player Private</title>
-  <meta name="description" content="Um MP3 Player privado ultra minimalista com super glassmorphism e design Apple-like para áudios binaurais com controle de volume e acesso protegido.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Binaural Labs - Private MP3 Player</title>
+  <meta name="description" content="MP3 Player privado ultra minimalista com super glassmorphism e design Apple VisionOS para áudios binaurais de alta fidelidade.">
   
-  <!-- Fontes Premium Google Fonts -->
+  <!-- PWA & Mobile Web App Settings -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#070709">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Binaural Pro">
+
+  <!-- OpenGraph / Social Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Binaural Labs - Private MP3 Player">
+  <meta property="og:description" content="Player Binaural Ultra Minimalista com Web Audio DSP e Acesso Privado.">
+  <meta property="og:image" content="https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/onboarding.jpg">
+  
+  <!-- Preconnect CDN & Supabase Backend for Instant Speeds on Vercel -->
+  <link rel="preconnect" href="https://kbqxzmyasstdvvbfymft.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://kbqxzmyasstdvvbfymft.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,8 +37,10 @@
 </head>
 <body>
 
-  <!-- Tela de Login Segura (Supabase Auth Puro) -->
+  <!-- Tela de Login Segura (Supabase Auth Puro com Fundo Zyzz Blur) -->
   <div id="login-screen" class="login-screen">
+    <div class="login-bg-layer" id="login-bg-layer"></div>
+    <div class="login-bg-overlay"></div>
     <div class="login-card glass-panel" id="login-card">
       <div class="login-header">
         <span class="login-logo"><i class="fa-solid fa-shield-halved"></i></span>
