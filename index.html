@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binaural Labs - MP3 Player Private</title>
+  <meta name="description" content="Um MP3 Player privado ultra minimalista com super glassmorphism e design Apple-like para áudios binaurais com controle de volume e acesso protegido.">
+  
+  <!-- Fontes Premium Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Tela de Login Segura (Supabase Auth Puro) -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card glass-panel" id="login-card">
+      <div class="login-header">
+        <span class="login-logo"><i class="fa-solid fa-shield-halved"></i></span>
+        <h2 id="login-title">Acesso Restrito</h2>
+        <p id="login-subtitle">Binaural Labs Frequências Privadas</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <input type="email" id="email-input" placeholder="Seu e-mail..." required autocomplete="email">
+        </div>
+        <div class="input-group">
+          <input type="password" id="password-input" placeholder="Sua senha de acesso..." required autocomplete="current-password">
+        </div>
+        <span id="login-error" class="login-error"></span>
+        <button type="submit" id="login-btn" class="btn btn-primary">
+          <i class="fa-solid fa-key"></i> Desbloquear Painel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Background Cinemático Slideshow (MCP OS Engine) -->
+  <div id="bg-slideshow" class="bg-slideshow authenticated-hidden">
+    <div id="bg-layer-active" class="bg-layer active"></div>
+    <div id="bg-layer-next" class="bg-layer"></div>
+    <video id="bg-video-1" class="bg-video-layer active" muted playsinline></video>
+    <video id="bg-video-2" class="bg-video-layer" muted playsinline></video>
+    <div id="bg-webgl-container"></div>
+    <div class="bg-overlay"></div>
+  </div>
+
+  <!-- Container Principal -->
+  <main class="app-container authenticated-hidden" id="app-main">
+    
+    <!-- Player Card Deck -->
+    <section class="player-deck" id="player-deck">
+      
+      <!-- Top Bar / Header -->
+      <header class="player-header">
+        <div class="brand">
+          <span class="brand-logo"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+          <div class="brand-text">
+            <h1>Binaural Labs</h1>
+            <p>Sintonização e Frequências Privadas</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btn-open-admin" class="btn-header-action admin-btn" title="Painel Admin de Faixas">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          <button id="btn-logout" class="btn-header-action" title="Sair da Conta">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+          <span id="status-tag" class="status-tag idle">Pronto</span>
+        </div>
+      </header>
+
+      <!-- Painel Master (Controles Globais) -->
+      <div class="master-panel glass-panel">
+        <div class="master-header">
+          <h2>Painel Master</h2>
+          <div class="master-badges">
+            <span class="badge" id="badge-playing-count">0 Ativos</span>
+          </div>
+        </div>
+        
+        <div class="master-controls">
+          <button id="btn-play-all" class="btn btn-primary" title="Tocar Todos os Áudios">
+            <i class="fa-solid fa-play"></i> Tocar Todas
+          </button>
+          <button id="btn-pause-all" class="btn btn-secondary" title="Pausar Todos os Áudios">
+            <i class="fa-solid fa-pause"></i> Pausar Todas
+          </button>
+        </div>
+
+        <!-- Canvas do Visualizador de Ondas Abstratas -->
+        <div class="visualizer-container">
+          <canvas id="master-visualizer" class="master-visualizer"></canvas>
+        </div>
+      </div>
+
+      <!-- Lista de Faixas -->
+      <div class="tracks-section">
+        <h3>Faixas Binaurais</h3>
+        
+        <div class="tracks-list" id="tracks-list">
+          <!-- As faixas serão renderizadas dinamicamente via JS pós-autenticação -->
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <footer class="player-footer">
+        <div class="footer-row-top">
+          <p><i class="fa-solid fa-cloud-arrow-down"></i> Sincronizado via Supabase Cloud Storage</p>
+        </div>
+        <div class="footer-row-bottom">
+          <div class="wallpaper-selector-container">
+            <span class="wp-label"><i class="fa-solid fa-wand-magic-sparkles"></i> <span id="current-bg-indicator">Atmosfera</span></span>
+          </div>
+          <button id="btn-open-settings" class="btn-bg-control" title="Configurar Fundo Dinâmico">
+            <i class="fa-solid fa-sliders"></i> Backgrounds
+          </button>
+        </div>
+      </footer>
+
+    </section>
+  </main>
+
+  <!-- Modal de Configurações de Fundo do MCP OS -->
+  <div id="settings-modal" class="settings-modal">
+    <div class="modal-backdrop" id="settings-backdrop"></div>
+    <div class="modal-panel">
+      <button class="modal-close" id="settings-close">✕</button>
+      <h2>⚙️ Fundo Dinâmico</h2>
+      <p class="modal-subtitle">Escolha a atmosfera visual para a sua sessão binaural</p>
+      
+      <div class="setting-group">
+        <label class="setting-label"><i class="fa-solid fa-images"></i> Galeria ou Shader WebGL</label>
+        <select class="setting-select" id="gallery-select">
+          <option value="random">🎲 Aleatório (Sorteio a cada reload)</option>
+          <option value="gym">🏋️ GYM Images</option>
+          <option value="flowers">🌸 Flowers</option>
+          <option value="red">🔴 Red</option>
+          <option value="soft">💿 Gen X Soft Club</option>
+          <option value="motivation">💪 Motivacional</option>
+          <option value="video">🌐 Cinematic Video (Streaming)</option>
+          <option value="api">🌐 API Background (Random)</option>
+          <optgroup label="✨ Shaders WebGL Animados">
+            <option value="galaxybits">✨ Todos os Shaders (Rotativo)</option>
+            <option value="strands">✨ Strands</option>
+            <option value="siderays">⚡ Side Rays</option>
+            <option value="plasmawave">🌊 Plasma Wave</option>
+            <option value="ferrofluid">🧲 Ferrofluid</option>
+            <option value="softaurora">🌌 Soft Aurora</option>
+            <option value="dither">👾 Dither</option>
+            <option value="darkveil">🌑 Dark Veil</option>
+            <option value="ancidsquares">🟩 Acid Squares</option>
+            <option value="webthreads">🕸️ Web Threads</option>
+            <option value="balatro">🃏 Balatro</option>
+            <option value="moltenmetal">🌋 Molten Metal</option>
+            <option value="topography">🗺️ Topography</option>
+            <option value="lighttunnel">🚀 Light Tunnel</option>
+          </optgroup>
+        </select>
+        
+        <button type="button" id="randomize-bg-btn" class="btn-subaction">
+          <i class="fa-solid fa-shuffle"></i> Sortear Novo Background Agora
+        </button>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" id="speed-label">
+          ⏱️ Tempo de Troca: <span id="speed-val-display" class="speed-highlight">10</span>s
+        </label>
+        <div class="slider-range-box">
+          <span class="range-min">5s</span>
+          <input type="range" id="custom-speed-slider" min="5" max="200" value="10" step="1" class="speed-range-input">
+          <span class="range-max">200s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal do Painel Admin (Adicionar / Excluir Faixas no Supabase) -->
+  <div id="admin-modal" class="admin-modal">
+    <div class="modal-backdrop" id="admin-backdrop"></div>
+    <div class="admin-modal-panel">
+      <button class="modal-close" id="admin-close">✕</button>
+      <h2>🛡️ Gerenciar Faixas</h2>
+      <p class="modal-subtitle">Controle em tempo real conectado ao Supabase Backend</p>
+      
+      <div class="admin-modal-body">
+        <!-- Formulário para Adicionar Faixa -->
+        <div>
+          <h4 class="admin-section-title"><i class="fa-solid fa-plus-circle"></i> Adicionar Nova Faixa</h4>
+          <form id="admin-add-track-form" class="admin-form">
+            <div class="admin-input-group">
+              <label>Título da Faixa</label>
+              <input type="text" id="admin-track-title" placeholder="Ex: 🧠 Neurogenesis Beta Wave" required>
+            </div>
+            
+            <div class="admin-input-group">
+              <label>Descrição da Faixa</label>
+              <input type="text" id="admin-track-desc" placeholder="Ex: Frequência Binaural para Hipertrofia e Foco" required>
+            </div>
+
+            <div class="admin-input-group">
+              <label>Arquivo de Áudio (MP3)</label>
+              <div class="file-input-wrapper">
+                <div class="file-input-btn" id="file-select-label">
+                  <i class="fa-solid fa-file-audio"></i> <span id="selected-file-name">Selecionar arquivo MP3...</span>
+                </div>
+                <input type="file" id="admin-track-file" accept="audio/mp3,audio/mpeg,audio/*" required>
+              </div>
+            </div>
+
+            <div class="admin-upload-progress" id="admin-upload-progress">
+              <div class="admin-upload-progress-fill" id="admin-upload-progress-fill"></div>
+            </div>
+
+            <button type="submit" id="btn-admin-submit" class="btn btn-primary">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Fazer Upload e Salvar
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista de Faixas para Exclusão -->
+        <div>
+          <h4 class="admin-section-title"><i class="fa-solid fa-list-check"></i> Faixas Cadastradas</h4>
+          <div class="admin-tracks-list" id="admin-tracks-list">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/webgl-backgrounds.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
