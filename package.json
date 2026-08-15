@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build": "echo 'Binaural Pro ready for Vercel'",
     "start": "npx -y serve .",
     "dev": "npx -y serve .",
     "test": "echo \"Success: all systems ready\" && exit 0"
