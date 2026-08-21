@@ -1,27 +1,27 @@
 {
   "name": "mcpos-binaural-pro",
   "version": "1.0.0",
-  "description": "",
+  "description": "Binaural Labs MP3 Player - Front-End Only com Criptografia AES-256-GCM e Web Audio DSP",
   "main": "app.js",
   "scripts": {
-    "start": "npx -y serve .",
-    "dev": "npx -y serve .",
+    "build": "echo 'Build OK'",
+    "start": "npx -y serve . -l 3000",
+    "dev": "npx -y serve . -l 3000",
     "test": "echo \"Success: all systems ready\" && exit 0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MateusCelestinoProX/m-c-p---os-binaural-pro.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "binaural",
+    "web-audio-api",
+    "pwa",
+    "glassmorphism",
+    "aes-256-gcm",
+    "indexeddb"
+  ],
+  "author": "Mateus Celestino",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/MateusCelestinoProX/m-c-p---os-binaural-pro/issues"
-  },
-  "homepage": "https://github.com/MateusCelestinoProX/m-c-p---os-binaural-pro#readme",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.112.3",
-    "mime-types": "^3.0.2"
-  }
+  "type": "commonjs"
 }

@@ -7,7 +7,7 @@
   <meta name="description" content="MP3 Player privado ultra minimalista com super glassmorphism e design Apple VisionOS para áudios binaurais de alta fidelidade.">
   
   <!-- PWA & Mobile Web App Settings -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#070709">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,27 +17,20 @@
   <!-- OpenGraph / Social Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Binaural Labs - Private MP3 Player">
-  <meta property="og:description" content="Player Binaural Ultra Minimalista com Web Audio DSP e Acesso Privado.">
-  <meta property="og:image" content="https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/onboarding.jpg">
+  <meta property="og:description" content="Player Binaural Ultra Minimalista com Web Audio DSP e Acesso Criptografado.">
+  <meta property="og:image" content="onboarding.jpg">
   
-  <!-- Preconnect CDN & Supabase Backend for Instant Speeds on Vercel -->
-  <link rel="preconnect" href="https://kbqxzmyasstdvvbfymft.supabase.co" crossorigin>
-  <link rel="dns-prefetch" href="https://kbqxzmyasstdvvbfymft.supabase.co">
+  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Supabase JS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Tela de Login Segura (Supabase Auth Puro com Fundo Zyzz Blur) -->
+  <!-- Tela de Desbloqueio do Cofre Master (Zyzz Blur Glassmorphism VisionOS) -->
   <div id="login-screen" class="login-screen">
     <div class="login-bg-layer" id="login-bg-layer"></div>
     <div class="login-bg-overlay"></div>
@@ -45,20 +38,20 @@
       <div class="login-header">
         <span class="login-logo"><i class="fa-solid fa-shield-halved"></i></span>
         <h2 id="login-title">Acesso Restrito</h2>
-        <p id="login-subtitle">Binaural Labs Frequências Privadas</p>
+        <p id="login-subtitle">Binaural Labs • Frequências Privadas</p>
       </div>
-      <form id="login-form" class="login-form">
+      <form id="vault-form" class="login-form">
         <div class="input-group">
-          <input type="email" id="email-input" placeholder="Seu e-mail..." required autocomplete="email">
-        </div>
-        <div class="input-group">
-          <input type="password" id="password-input" placeholder="Sua senha de acesso..." required autocomplete="current-password">
+          <input type="password" id="passcode-input" placeholder="Digite a chave de acesso..." required autocomplete="off" autofocus>
         </div>
         <span id="login-error" class="login-error"></span>
-        <button type="submit" id="login-btn" class="btn btn-primary">
+        <button type="submit" id="unlock-btn" class="btn btn-primary">
           <i class="fa-solid fa-key"></i> Desbloquear Painel
         </button>
       </form>
+      <div class="vault-security-footer">
+        <i class="fa-solid fa-lock"></i> Criptografia AES-GCM 256-bit
+      </div>
     </div>
   </div>
 
@@ -88,11 +81,8 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="btn-open-admin" class="btn-header-action admin-btn" title="Painel Admin de Faixas">
-            <i class="fa-solid fa-gear"></i>
-          </button>
-          <button id="btn-logout" class="btn-header-action" title="Sair da Conta">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <button id="btn-lock" class="btn-header-action" title="Bloquear Cofre">
+            <i class="fa-solid fa-lock"></i>
           </button>
           <span id="status-tag" class="status-tag idle">Pronto</span>
         </div>
@@ -127,14 +117,14 @@
         <h3>Faixas Binaurais</h3>
         
         <div class="tracks-list" id="tracks-list">
-          <!-- As faixas serão renderizadas dinamicamente via JS pós-autenticação -->
+          <!-- As faixas serão renderizadas dinamicamente via JS pós-descriptografia -->
         </div>
       </div>
 
       <!-- Footer Info -->
       <footer class="player-footer">
         <div class="footer-row-top">
-          <p><i class="fa-solid fa-cloud-arrow-down"></i> Sincronizado via Supabase Cloud Storage</p>
+          <p><i class="fa-solid fa-database"></i> Sincronizado & Cacheado em IndexedDB (Offline Ready)</p>
         </div>
         <div class="footer-row-bottom">
           <div class="wallpaper-selector-container">
@@ -199,60 +189,6 @@
           <span class="range-min">5s</span>
           <input type="range" id="custom-speed-slider" min="5" max="200" value="10" step="1" class="speed-range-input">
           <span class="range-max">200s</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal do Painel Admin (Adicionar / Excluir Faixas no Supabase) -->
-  <div id="admin-modal" class="admin-modal">
-    <div class="modal-backdrop" id="admin-backdrop"></div>
-    <div class="admin-modal-panel">
-      <button class="modal-close" id="admin-close">✕</button>
-      <h2>🛡️ Gerenciar Faixas</h2>
-      <p class="modal-subtitle">Controle em tempo real conectado ao Supabase Backend</p>
-      
-      <div class="admin-modal-body">
-        <!-- Formulário para Adicionar Faixa -->
-        <div>
-          <h4 class="admin-section-title"><i class="fa-solid fa-plus-circle"></i> Adicionar Nova Faixa</h4>
-          <form id="admin-add-track-form" class="admin-form">
-            <div class="admin-input-group">
-              <label>Título da Faixa</label>
-              <input type="text" id="admin-track-title" placeholder="Ex: 🧠 Neurogenesis Beta Wave" required>
-            </div>
-            
-            <div class="admin-input-group">
-              <label>Descrição da Faixa</label>
-              <input type="text" id="admin-track-desc" placeholder="Ex: Frequência Binaural para Hipertrofia e Foco" required>
-            </div>
-
-            <div class="admin-input-group">
-              <label>Arquivo de Áudio (MP3)</label>
-              <div class="file-input-wrapper">
-                <div class="file-input-btn" id="file-select-label">
-                  <i class="fa-solid fa-file-audio"></i> <span id="selected-file-name">Selecionar arquivo MP3...</span>
-                </div>
-                <input type="file" id="admin-track-file" accept="audio/mp3,audio/mpeg,audio/*" required>
-              </div>
-            </div>
-
-            <div class="admin-upload-progress" id="admin-upload-progress">
-              <div class="admin-upload-progress-fill" id="admin-upload-progress-fill"></div>
-            </div>
-
-            <button type="submit" id="btn-admin-submit" class="btn btn-primary">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Fazer Upload e Salvar
-            </button>
-          </form>
-        </div>
-
-        <!-- Lista de Faixas para Exclusão -->
-        <div>
-          <h4 class="admin-section-title"><i class="fa-solid fa-list-check"></i> Faixas Cadastradas</h4>
-          <div class="admin-tracks-list" id="admin-tracks-list">
-            <!-- Renderizado dinamicamente via JS -->
-          </div>
         </div>
       </div>
     </div>

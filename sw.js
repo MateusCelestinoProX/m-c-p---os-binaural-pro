@@ -1,19 +1,20 @@
-// Binaural Labs Pro - Service Worker for Vercel Edge Performance
-const CACHE_NAME = 'binaural-pro-v1';
+// Binaural Labs Pro - Service Worker for Offline Performance & Edge Caching
+const CACHE_NAME = 'binaural-pro-v2';
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/js/webgl-backgrounds.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './js/webgl-backgrounds.js',
+  './manifest.json',
+  './onboarding.jpg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn('[SW] Pre-cache non-fatal error:', err);
+        console.warn('[SW] Pre-cache warning:', err);
       });
     }).then(() => self.skipWaiting())
   );
@@ -34,16 +35,15 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Do not cache Supabase API calls or audio streams directly in cache storage (streamed on demand)
+  // Audio files (.mp3) are cached into IndexedDB for persistent storage & full range seeking
   const url = new URL(event.request.url);
-  if (url.origin.includes('supabase.co') || event.request.method !== 'GET') {
+  if (event.request.method !== 'GET' || url.pathname.endsWith('.mp3')) {
     return;
   }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cache and fetch update in background (stale-while-revalidate)
         fetch(event.request).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => {

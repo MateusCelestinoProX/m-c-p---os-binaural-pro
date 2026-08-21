@@ -1,17 +1,103 @@
+# ==============================================================================
+# BINAURAL LABS PRO - NETLIFY DEPLOY & PERFORMANCE CONFIGURATION
+# Optimized for Web Audio API DSP, PWA, Edge Caching, and Maximum Bandwidth Efficiency
+# ==============================================================================
+
 [build]
   publish = "."
-  command = "echo 'Building Binaural Labs Cloud...'"
+  command = "echo 'Building Binaural Labs Pro (Front-End Only)...'"
 
+# ------------------------------------------------------------------------------
+# SPA & CLEAN URL ROUTING
+# ------------------------------------------------------------------------------
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# ------------------------------------------------------------------------------
+# GLOBAL SECURITY & PERMISSION HEADERS
+# ------------------------------------------------------------------------------
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "autoplay=*, microphone=()"
+    Permissions-Policy = "autoplay=*, microphone=(), camera=(), display-capture=()"
     Access-Control-Allow-Origin = "*"
+
+# ------------------------------------------------------------------------------
+# IMMUTABLE CACHING FOR LOCAL BINAURAL AUDIO FILES (BANDWIDTH SAVING)
+# ------------------------------------------------------------------------------
+[[headers]]
+  for = "/audios/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+# ------------------------------------------------------------------------------
+# MEDIA & FONT ASSETS (IMAGES, VIDEOS, ICONS, FONTS)
+# ------------------------------------------------------------------------------
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ------------------------------------------------------------------------------
+# JAVASCRIPT & CSS BUNDLES
+# ------------------------------------------------------------------------------
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+# ------------------------------------------------------------------------------
+# CORE ENTRY POINTS (IMMEDIATE REVALIDATION)
+# ------------------------------------------------------------------------------
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

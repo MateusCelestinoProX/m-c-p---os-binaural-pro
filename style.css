@@ -177,6 +177,22 @@ body {
   display: block;
 }
 
+.vault-security-footer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  letter-spacing: 0.3px;
+}
+
+.vault-security-footer i {
+  color: var(--accent-color);
+  font-size: 11px;
+}
+
 /* Background Cinemático Slideshow */
 .bg-slideshow, #bg-container {
   position: fixed;

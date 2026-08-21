@@ -1,23 +1,84 @@
 // ==========================================================================
-// BINAURAL LABS - MP3 PLAYER PRIVATE
-// Integração Completa: Web Audio API + Supabase Backend + Backgrounds MCP OS
+// BINAURAL LABS - MP3 PLAYER PRO (FRONT-END ONLY & CRIPTOGRAFIA AES-256-GCM)
+// Web Audio API DSP + Criptografia Web Crypto + Cache Offline IndexedDB
 // ==========================================================================
 
-const SUPABASE_URL = 'https://kbqxzmyasstdvvbfymft.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImticXh6bXlhc3N0ZHZ2YmZ5bWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MTU5OTksImV4cCI6MjEwMjI5MTk5OX0.b9BVA-Uso6hoNc8Zhol8svV_JDV56j-FCjhUVaW5-8M';
+// --------------------------------------------------------------------------
+// 1. COFRE CRIPTOGRÁFICO AES-256-GCM (PROTEÇÃO TOTAL FRONT-END ONLY)
+// --------------------------------------------------------------------------
+const VAULT_CONFIG = {
+  salt: "f7dpYLB1XNQunNF50DcxSw==",
+  iv: "1LIgfi0HrFmPcklq",
+  ciphertext: "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",
+  iterations: 100000
+};
 
-let supabaseClient = null;
-function getSupabase() {
-  if (supabaseClient) return supabaseClient;
-  if (window.supabase && typeof window.supabase.createClient === 'function') {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return supabaseClient;
+function base64ToUint8Array(base64) {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
   }
-  return null;
+  return bytes;
+}
+
+function uint8ArrayToBase64(bytes) {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+async function deriveAesKey(passcode, saltBytes) {
+  const enc = new TextEncoder();
+  const normalized = passcode.trim().toLowerCase();
+  
+  const baseKey = await window.crypto.subtle.importKey(
+    'raw',
+    enc.encode(normalized),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+
+  return await window.crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: saltBytes,
+      iterations: VAULT_CONFIG.iterations,
+      hash: 'SHA-256'
+    },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+}
+
+async function unlockVaultWithPasscode(passcode) {
+  const saltBytes = base64ToUint8Array(VAULT_CONFIG.salt);
+  const ivBytes = base64ToUint8Array(VAULT_CONFIG.iv);
+  const ciphertextBytes = base64ToUint8Array(VAULT_CONFIG.ciphertext);
+
+  const aesKey = await deriveAesKey(passcode, saltBytes);
+
+  // Tentativa de decriptação autenticada AES-GCM
+  const decryptedBuf = await window.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: ivBytes },
+    aesKey,
+    ciphertextBytes
+  );
+
+  const dec = new TextDecoder();
+  const jsonStr = dec.decode(decryptedBuf);
+  return JSON.parse(jsonStr);
 }
 
 // --------------------------------------------------------------------------
-// 1. GALERIAS DE BACKGROUNDS E VÍDEOS (DO SUPABASE / MCP OS)
+// 2. GALERIAS DE BACKGROUNDS ESTÁTICAS E SHADERS WEBGL
 // --------------------------------------------------------------------------
 const GALLERIES = {
   gym: [
@@ -34,7 +95,7 @@ const GALLERIES = {
     "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/e5ef0ddde9b00540cdf18e4b226e0bee.jpg",
     "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/eca2c6f16007ec99ca3c5058876b2af6.jpg",
     "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/f4fcf6bb7808351828fbd6ed76cba496.jpg",
-    "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/gym/onboarding.jpg"
+    "onboarding.jpg"
   ],
   flowers: [
     "https://kbqxzmyasstdvvbfymft.supabase.co/storage/v1/object/public/binaural-backgrounds/flowers/59da96db902a205e9f90e651a4bcaa72.jpg",
@@ -126,9 +187,9 @@ function getRandomGalleryFromPool() {
 }
 
 // --------------------------------------------------------------------------
-// 2. ESTADO GLOBAL DO SISTEMA
+// 3. ESTADO GLOBAL DO SISTEMA
 // --------------------------------------------------------------------------
-let currentUser = null;
+let isUnlocked = false;
 let wallpaperCategory = localStorage.getItem('binaural_wallpaper_category') || 'random';
 let currentBgIndex = 0;
 let bgInterval = null;
@@ -143,15 +204,15 @@ const audioSourcesMap = new Map();       // audioElement -> MediaElementAudioSou
 const trackVolumeNodesMap = new Map();   // trackId -> GainNode (Volume 0.0 - 1.0)
 const trackBoostNodesMap = new Map();    // trackId -> GainNode (Booster 1.0 - 4.0)
 
-// Fila de Downloads Supabase
+// Fila de Downloads Locais / IndexedDB
 let downloadQueue = [];
 let isDownloadingQueue = false;
 
-// Configuração do Limitador Master
+// Configuração do Limitador Master Anti-Distorção
 const compressorConfig = {
   threshold: -3, // dB
   knee: 30,      // dB
-  ratio: 20,     // Compressão alta
+  ratio: 20,     // Compressão precisa
   attack: 0.003, // 3ms
   release: 0.15  // 150ms
 };
@@ -159,11 +220,10 @@ const compressorConfig = {
 // Elementos do DOM estáticos
 const loginScreen = document.getElementById('login-screen');
 const loginCard = document.getElementById('login-card');
-const loginForm = document.getElementById('login-form');
-const emailInput = document.getElementById('email-input');
-const passwordInput = document.getElementById('password-input');
+const vaultForm = document.getElementById('vault-form');
+const passcodeInput = document.getElementById('passcode-input');
 const loginError = document.getElementById('login-error');
-const loginBtn = document.getElementById('login-btn');
+const unlockBtn = document.getElementById('unlock-btn');
 
 const appMain = document.getElementById('app-main');
 const bgSlideshow = document.getElementById('bg-slideshow');
@@ -175,14 +235,13 @@ const badgePlayingCount = document.getElementById('badge-playing-count');
 
 const btnPlayAll = document.getElementById('btn-play-all');
 const btnPauseAll = document.getElementById('btn-pause-all');
-const btnLogout = document.getElementById('btn-logout');
-const btnOpenAdmin = document.getElementById('btn-open-admin');
+const btnLock = document.getElementById('btn-lock');
 
 const canvas = document.getElementById('master-visualizer');
 const canvasCtx = canvas ? canvas.getContext('2d') : null;
 
 // --------------------------------------------------------------------------
-// 3. CACHE OFFLINE INDEXEDDB
+// 4. CACHE OFFLINE INDEXEDDB (BinauralLabsOfflineDB)
 // --------------------------------------------------------------------------
 const DB_NAME = "BinauralLabsOfflineDB";
 const DB_VERSION = 1;
@@ -233,7 +292,7 @@ async function saveCachedAudio(trackId, blob) {
 }
 
 // --------------------------------------------------------------------------
-// 4. RENDERIZAÇÃO DAS FAIXAS (EXATA AO DESIGN ORIGINAL)
+// 5. RENDERIZAÇÃO DAS FAIXAS ULTRA GLASSMORPHISM
 // --------------------------------------------------------------------------
 function renderTracks(tracks) {
   const container = document.getElementById('tracks-list');
@@ -292,10 +351,10 @@ function renderTracks(tracks) {
           </div>
         </div>
 
-        <!-- Caching e Download Direto do Supabase -->
+        <!-- Caching e Download Direto no IndexedDB -->
         <div class="track-download-row">
           <button id="btn-download-${track.id}" class="btn-download-track">
-            <i class="fa-solid fa-cloud-arrow-down"></i> <span id="download-text-${track.id}">Salvar Offline (${track.size || track.size_label || 'HQ'})</span>
+            <i class="fa-solid fa-cloud-arrow-down"></i> <span id="download-text-${track.id}">Salvar Offline (${track.size || 'HQ'})</span>
           </button>
           <div class="download-progress-bar" id="download-progress-wrapper-${track.id}">
             <div class="download-progress-fill" id="download-progress-fill-${track.id}"></div>
@@ -315,163 +374,11 @@ function renderTracks(tracks) {
           </div>
         </div>
       </div>
-      <audio id="audio-${track.id}" src="${track.audio_url || track.file}" loop preload="auto" crossorigin="anonymous"></audio>
+      <audio id="audio-${track.id}" src="${track.file}" loop preload="none"></audio>
     `;
     
     container.appendChild(card);
   });
-}
-
-// --------------------------------------------------------------------------
-// 5. AUTENTICAÇÃO REAL SUPABASE AUTH & CONTROLE DE SESSÃO
-// --------------------------------------------------------------------------
-async function handleLoginSubmit(e) {
-  if (e) e.preventDefault();
-  
-  const rawEmail = emailInput ? emailInput.value.trim() : "";
-  const rawPassword = passwordInput ? passwordInput.value : "";
-  
-  if (!rawEmail || !rawPassword) {
-    showLoginError("Por favor, preencha o e-mail e a senha.");
-    return;
-  }
-
-  if (loginBtn) {
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Autenticando...';
-  }
-  if (loginError) loginError.textContent = "";
-
-  try {
-    const client = getSupabase();
-    if (!client) throw new Error("Cliente Supabase não inicializado.");
-
-    const { data, error } = await client.auth.signInWithPassword({
-      email: rawEmail,
-      password: rawPassword
-    });
-
-    if (error) {
-      showLoginError(error.message || "Credenciais inválidas. Verifique seu e-mail e senha.");
-      return;
-    }
-
-    if (data && data.user) {
-      currentUser = data.user;
-      unlockApp(data.user);
-    }
-  } catch (err) {
-    showLoginError(err.message || "Erro na conexão com o servidor de autenticação.");
-  } finally {
-    if (loginBtn) {
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = '<i class="fa-solid fa-key"></i> Desbloquear Painel';
-    }
-  }
-}
-
-function showLoginError(msg) {
-  if (loginError) loginError.textContent = msg;
-  if (loginCard) {
-    loginCard.classList.add('shake');
-    setTimeout(() => loginCard.classList.remove('shake'), 450);
-  }
-}
-
-async function unlockApp(user) {
-  currentUser = user;
-  if (loginScreen) loginScreen.classList.add('authenticated-hidden');
-  if (appMain) appMain.classList.remove('authenticated-hidden');
-  if (bgSlideshow) bgSlideshow.classList.remove('authenticated-hidden');
-  
-  await loadGalleriesData();
-  await loadTracksData();
-  renderTracks(tracksData);
-  setupTrackEventListeners();
-  setupWallpaperControls();
-  initBackground();
-  initAdminPanel();
-  
-  // Download imediato em background de todos os recursos de faixas
-  checkAllCachesAndStartDownloads();
-}
-
-async function handleLogout() {
-  const client = getSupabase();
-  if (client) {
-    await client.auth.signOut();
-  }
-  currentUser = null;
-  if (loginScreen) loginScreen.classList.remove('authenticated-hidden');
-  if (appMain) appMain.classList.add('authenticated-hidden');
-  if (bgSlideshow) bgSlideshow.classList.add('authenticated-hidden');
-  if (emailInput) emailInput.value = "";
-  if (passwordInput) passwordInput.value = "";
-}
-
-async function checkSessionAuth() {
-  const client = getSupabase();
-  if (!client) return;
-
-  try {
-    const { data: { session }, error } = await client.auth.getSession();
-    if (!error && session && session.user) {
-      currentUser = session.user;
-      unlockApp(session.user);
-    }
-
-    client.auth.onAuthStateChange((event, session) => {
-      if (session && session.user) {
-        currentUser = session.user;
-      }
-    });
-  } catch (e) {
-    console.warn("Verificação de sessão:", e);
-  }
-}
-
-async function loadGalleriesData() {
-  const client = getSupabase();
-  if (!client) return;
-  try {
-    const { data, error } = await client
-      .from('app_config')
-      .select('value')
-      .eq('key', 'background_galleries')
-      .single();
-
-    if (!error && data && data.value) {
-      Object.assign(GALLERIES, data.value);
-    }
-  } catch (e) {
-    console.warn("Erro ao buscar galerias do Supabase:", e);
-  }
-}
-
-async function loadTracksData() {
-  const client = getSupabase();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('tracks')
-        .select('*')
-        .order('order_index', { ascending: true });
-
-      if (!error && data && data.length > 0) {
-        tracksData = data.map(t => ({
-          id: t.id,
-          title: t.title,
-          desc: t.description,
-          size: t.size_label || "HQ",
-          audio_url: t.audio_url,
-          file: t.audio_url
-        }));
-        return;
-      }
-    } catch (e) {
-      console.warn("Erro ao carregar faixas:", e);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------
@@ -730,7 +637,7 @@ function updateOverallStatus() {
 }
 
 // --------------------------------------------------------------------------
-// 7. DOWNLOAD IMEDIATO E CACHE EM INDEXEDDB (DIRETO DO SUPABASE STORAGE)
+// 7. DOWNLOAD IMEDIATO E CACHE EM INDEXEDDB
 // --------------------------------------------------------------------------
 async function checkAllCachesAndStartDownloads() {
   for (const track of tracksData) {
@@ -779,10 +686,10 @@ async function processDownloadQueue() {
   
   if (downloadBtn) downloadBtn.classList.add('downloading');
   if (progressWrapper) progressWrapper.classList.add('active');
-  if (downloadText) downloadText.textContent = "Baixando Supabase...";
+  if (downloadText) downloadText.textContent = "Baixando...";
   
   try {
-    const targetUrl = track.audio_url || track.file;
+    const targetUrl = track.file;
     const response = await fetch(targetUrl);
     const contentLength = response.headers.get('content-length');
     const total = parseInt(contentLength, 10) || 0;
@@ -826,218 +733,12 @@ async function processDownloadQueue() {
   
   isDownloadingQueue = false;
   if (downloadQueue.length > 0) {
-    setTimeout(processDownloadQueue, 200);
+    setTimeout(processDownloadQueue, 150);
   }
 }
 
 // --------------------------------------------------------------------------
-// 8. PAINEL ADMINISTRATIVO (ADICIONAR & EXCLUIR FAIXAS NO SUPABASE)
-// --------------------------------------------------------------------------
-function initAdminPanel() {
-  const adminModal = document.getElementById('admin-modal');
-  const adminClose = document.getElementById('admin-close');
-  const adminBackdrop = document.getElementById('admin-backdrop');
-  const addTrackForm = document.getElementById('admin-add-track-form');
-  const trackFileInput = document.getElementById('admin-track-file');
-  const selectedFileName = document.getElementById('selected-file-name');
-  const uploadProgress = document.getElementById('admin-upload-progress');
-  const uploadProgressFill = document.getElementById('admin-upload-progress-fill');
-  const btnAdminSubmit = document.getElementById('btn-admin-submit');
-
-  const openAdmin = () => {
-    if (adminModal) {
-      adminModal.classList.add('active');
-      renderAdminTracksList();
-    }
-  };
-  const closeAdmin = () => {
-    if (adminModal) adminModal.classList.remove('active');
-  };
-
-  if (btnOpenAdmin) btnOpenAdmin.addEventListener('click', openAdmin);
-  if (adminClose) adminClose.addEventListener('click', closeAdmin);
-  if (adminBackdrop) adminBackdrop.addEventListener('click', closeAdmin);
-
-  if (trackFileInput && selectedFileName) {
-    trackFileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-        selectedFileName.textContent = `${file.name} (${sizeMb} MB)`;
-      } else {
-        selectedFileName.textContent = "Selecionar arquivo MP3...";
-      }
-    });
-  }
-
-  if (addTrackForm) {
-    addTrackForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const titleInput = document.getElementById('admin-track-title');
-      const descInput = document.getElementById('admin-track-desc');
-
-      const title = titleInput.value.trim();
-      const desc = descInput.value.trim();
-      const file = trackFileInput.files[0];
-
-      if (!title || !desc || !file) {
-        alert("Por favor, preencha todos os campos e selecione o arquivo MP3.");
-        return;
-      }
-
-      const client = getSupabase();
-      if (!client) {
-        alert("Erro: Cliente Supabase não conectado.");
-        return;
-      }
-
-      // Gerar ID seguro
-      const slugId = title.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '') || `track-${Date.now()}`;
-
-      const fileName = `${slugId}.mp3`;
-      const sizeLabel = `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
-
-      if (btnAdminSubmit) {
-        btnAdminSubmit.disabled = true;
-        btnAdminSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Enviando para o Supabase...';
-      }
-      if (uploadProgress) uploadProgress.classList.add('active');
-      if (uploadProgressFill) uploadProgressFill.style.width = '40%';
-
-      try {
-        // 1. Upload do Arquivo para o Bucket do Supabase Storage
-        const { data: uploadData, error: uploadErr } = await client.storage
-          .from('binaural-audios')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: true
-          });
-
-        if (uploadErr) throw uploadErr;
-
-        if (uploadProgressFill) uploadProgressFill.style.width = '80%';
-
-        // 2. Obter URL Pública
-        const { data: publicUrlData } = client.storage
-          .from('binaural-audios')
-          .getPublicUrl(fileName);
-
-        const publicAudioUrl = publicUrlData.publicUrl;
-
-        // 3. Inserir Registro na Tabela Tracks
-        const newOrder = tracksData.length + 1;
-        const { data: insertData, error: insertErr } = await client
-          .from('tracks')
-          .upsert({
-            id: slugId,
-            title: title,
-            description: desc,
-            audio_url: publicAudioUrl,
-            size_label: sizeLabel,
-            order_index: newOrder
-          });
-
-        if (insertErr) throw insertErr;
-
-        if (uploadProgressFill) uploadProgressFill.style.width = '100%';
-
-        alert(`✅ Faixa "${title}" adicionada com sucesso ao Supabase!`);
-        addTrackForm.reset();
-        if (selectedFileName) selectedFileName.textContent = "Selecionar arquivo MP3...";
-        
-        // Recarregar dados e atualizar telas
-        await loadTracksData();
-        renderTracks(tracksData);
-        setupTrackEventListeners();
-        renderAdminTracksList();
-        checkAllCachesAndStartDownloads();
-      } catch (err) {
-        console.error("Erro ao adicionar faixa:", err);
-        alert(`❌ Falha ao adicionar faixa: ${err.message}`);
-      } finally {
-        if (btnAdminSubmit) {
-          btnAdminSubmit.disabled = false;
-          btnAdminSubmit.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Fazer Upload e Salvar';
-        }
-        if (uploadProgress) uploadProgress.classList.remove('active');
-        if (uploadProgressFill) uploadProgressFill.style.width = '0%';
-      }
-    });
-  }
-}
-
-function renderAdminTracksList() {
-  const listContainer = document.getElementById('admin-tracks-list');
-  if (!listContainer) return;
-  listContainer.innerHTML = "";
-
-  if (!tracksData || tracksData.length === 0) {
-    listContainer.innerHTML = `<p style="font-size: 11px; color: var(--text-muted); text-align: center;">Nenhuma faixa cadastrada.</p>`;
-    return;
-  }
-
-  tracksData.forEach(track => {
-    const item = document.createElement('div');
-    item.className = "admin-track-item";
-    item.innerHTML = `
-      <div class="admin-track-info">
-        <h5>${track.title}</h5>
-        <p>${track.size || 'HQ'} • ${track.desc || ''}</p>
-      </div>
-      <button class="btn-delete-track" data-track-id="${track.id}" title="Excluir Faixa">
-        <i class="fa-solid fa-trash"></i> Excluir
-      </button>
-    `;
-
-    const deleteBtn = item.querySelector('.btn-delete-track');
-    deleteBtn.addEventListener('click', async () => {
-      const confirmDelete = confirm(`Deseja realmente excluir a faixa "${track.title}" do Supabase?`);
-      if (!confirmDelete) return;
-
-      deleteBtn.disabled = true;
-      deleteBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-
-      try {
-        const client = getSupabase();
-        if (!client) throw new Error("Cliente Supabase não conectado.");
-
-        // 1. Remover do Banco de Dados
-        const { error: dbErr } = await client
-          .from('tracks')
-          .delete()
-          .eq('id', track.id);
-
-        if (dbErr) throw dbErr;
-
-        // 2. Tentar remover arquivo do Storage
-        const fileName = `${track.id}.mp3`;
-        await client.storage.from('binaural-audios').remove([fileName]);
-
-        // 3. Atualizar Lista Local
-        tracksData = tracksData.filter(t => t.id !== track.id);
-        renderTracks(tracksData);
-        setupTrackEventListeners();
-        renderAdminTracksList();
-
-        alert(`Faixa "${track.title}" excluída com sucesso!`);
-      } catch (err) {
-        console.error("Erro ao excluir faixa:", err);
-        alert(`Falha ao excluir: ${err.message}`);
-        deleteBtn.disabled = false;
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Excluir';
-      }
-    });
-
-    listContainer.appendChild(item);
-  });
-}
-
-// --------------------------------------------------------------------------
-// 9. MOTOR DE BACKGROUNDS DINÂMICOS (FOTOS, SHADERS E VÍDEOS)
+// 8. MOTOR DE BACKGROUNDS DINÂMICOS (FOTOS, SHADERS E VÍDEOS)
 // --------------------------------------------------------------------------
 function initBackground() {
   const video1 = document.getElementById("bg-video-1");
@@ -1270,7 +971,7 @@ function setupWallpaperControls() {
 }
 
 // --------------------------------------------------------------------------
-// 10. VISUALIZADOR DE ÁUDIO NO CANVAS MASTER
+// 9. VISUALIZADOR DE ÁUDIO NO CANVAS MASTER (ONDA ABSTRATA)
 // --------------------------------------------------------------------------
 function drawVisualizer() {
   if (!canvasCtx || !canvas) return;
@@ -1342,11 +1043,117 @@ function drawVisualizer() {
 }
 
 // --------------------------------------------------------------------------
+// 10. FLUXO DE DESBLOQUEIO & CONTROLE DE SESSÃO
+// --------------------------------------------------------------------------
+async function handleUnlockSubmit(e) {
+  if (e) e.preventDefault();
+  
+  const rawPasscode = passcodeInput ? passcodeInput.value : "";
+  if (!rawPasscode) {
+    showUnlockError("Digite a chave de acesso.");
+    return;
+  }
+
+  if (unlockBtn) {
+    unlockBtn.disabled = true;
+    unlockBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Decriptando cofre...';
+  }
+  if (loginError) loginError.textContent = "";
+
+  try {
+    const decryptedTracks = await unlockVaultWithPasscode(rawPasscode);
+    if (!decryptedTracks || !Array.isArray(decryptedTracks) || decryptedTracks.length === 0) {
+      throw new Error("Chave de acesso incorreta.");
+    }
+
+    // Salvar token na sessão atual
+    try {
+      sessionStorage.setItem('binaural_vault_key', rawPasscode);
+    } catch(e){}
+
+    unlockAppWithTracks(decryptedTracks);
+  } catch (err) {
+    showUnlockError("Chave incorreta ou falha criptográfica.");
+  } finally {
+    if (unlockBtn) {
+      unlockBtn.disabled = false;
+      unlockBtn.innerHTML = '<i class="fa-solid fa-key"></i> Desbloquear Painel';
+    }
+  }
+}
+
+function showUnlockError(msg) {
+  if (loginError) loginError.textContent = msg;
+  if (loginCard) {
+    loginCard.classList.add('shake');
+    setTimeout(() => loginCard.classList.remove('shake'), 450);
+  }
+  if (passcodeInput) passcodeInput.focus();
+}
+
+function unlockAppWithTracks(tracks) {
+  isUnlocked = true;
+  tracksData = tracks;
+  
+  if (loginScreen) loginScreen.classList.add('authenticated-hidden');
+  if (appMain) appMain.classList.remove('authenticated-hidden');
+  if (bgSlideshow) bgSlideshow.classList.remove('authenticated-hidden');
+  
+  renderTracks(tracksData);
+  setupTrackEventListeners();
+  setupWallpaperControls();
+  initBackground();
+  
+  // Download imediato em background de todos os 13 áudios no IndexedDB
+  checkAllCachesAndStartDownloads();
+}
+
+function lockVault() {
+  try {
+    sessionStorage.removeItem('binaural_vault_key');
+  } catch(e){}
+  
+  isUnlocked = false;
+  tracksData = [];
+  
+  // Pausar todos os áudios
+  const audioElements = document.querySelectorAll('audio');
+  audioElements.forEach(a => { try { a.pause(); } catch(e){} });
+  
+  const tracksList = document.getElementById('tracks-list');
+  if (tracksList) tracksList.innerHTML = "";
+  
+  if (loginScreen) loginScreen.classList.remove('authenticated-hidden');
+  if (appMain) appMain.classList.add('authenticated-hidden');
+  if (bgSlideshow) bgSlideshow.classList.add('authenticated-hidden');
+  if (passcodeInput) {
+    passcodeInput.value = "";
+    passcodeInput.focus();
+  }
+}
+
+async function checkSavedSession() {
+  try {
+    const savedKey = sessionStorage.getItem('binaural_vault_key');
+    if (savedKey) {
+      const decryptedTracks = await unlockVaultWithPasscode(savedKey);
+      if (decryptedTracks && Array.isArray(decryptedTracks) && decryptedTracks.length > 0) {
+        unlockAppWithTracks(decryptedTracks);
+        return;
+      }
+    }
+  } catch (e) {
+    sessionStorage.removeItem('binaural_vault_key');
+  }
+}
+
+// --------------------------------------------------------------------------
 // 11. INICIALIZAÇÃO NO DOM READY
 // --------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  if (loginForm) loginForm.addEventListener('submit', handleLoginSubmit);
-  if (loginBtn) loginBtn.addEventListener('click', handleLoginSubmit);
-  if (btnLogout) btnLogout.addEventListener('click', handleLogout);
-  checkSessionAuth();
+  if (vaultForm) vaultForm.addEventListener('submit', handleUnlockSubmit);
+  if (unlockBtn) unlockBtn.addEventListener('click', handleUnlockSubmit);
+  if (btnLock) btnLock.addEventListener('click', lockVault);
+  
+  checkSavedSession();
 });
